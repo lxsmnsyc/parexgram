@@ -107,8 +107,22 @@ export function quantifier<T>(
         end: feed.cursor,
       };
     }
-    // eslint-disable-next-line no-param-reassign
     feed.cursor = cursor;
     return null;
+  };
+}
+
+export function optional<T>(matcher: Matcher<T>): Matcher<MatchResult<T> | null> {
+  return (feed) => {
+    const { cursor } = feed;
+    const result = matcher(feed);
+    if (result) {
+      feed.cursor = cursor;
+    }
+    return {
+      value: result ?? null,
+      start: cursor,
+      end: feed.cursor,
+    };
   };
 }
